@@ -64,7 +64,7 @@
         for(var i = 0; i < shooting.length; i++) {
             for (var j = 0; j < time; j += 100) {
                 if (shooting[i] != ' ') {
-                    shootAir(shooting[i], i * time + j);
+                    shootAir(shooting[i], i *10* time + j);
                 }
             }
             setTimeout(function() { Keyboard.explode(); }, (i + 1) * 2*time);
