@@ -39,8 +39,8 @@
     _useInspector = window.location.hash.indexOf('-inspect') !== -1,
     _isMobile = /(ipad|iphone|ipod|android)/gi.test(navigator.userAgent);
 
-    var keyword = 'TURKCELL';
-    var shooting = 'BAGLANHAYATA';
+    var keyword = 'ROBOTISTAN';
+    var shooting = '8934';
     var sequence = [];
     var time = 1500;
 
