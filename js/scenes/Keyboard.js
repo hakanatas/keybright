@@ -42,7 +42,7 @@
     var keyword = 'ROBOTISTAN';
     var shooting = '8934';
     var sequence = [];
-    var time = 1500;
+    var time = 2000;
 
     var checkSequence = function(key) {
         sequence.push(String.fromCharCode(key));
@@ -67,7 +67,7 @@
                     shootAir(shooting[i], i * time + j);
                 }
             }
-            setTimeout(function() { Keyboard.explode(); }, (i + 1) * time);
+            setTimeout(function() { Keyboard.explode(); }, (i + 1) * 2*time);
         }
     }
     
