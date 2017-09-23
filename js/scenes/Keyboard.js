@@ -57,14 +57,14 @@
     }
 
     var shootAir = function(letter, time) {
-        setTimeout(function() { Keyboard.shootLetter(letter.charCodeAt(0)); }, 5* time);
+        setTimeout(function() { Keyboard.shootLetter(letter.charCodeAt(0)); }, 2 * time);
     }
 
     var fireworks = function() {
         for(var i = 0; i < shooting.length; i++) {
             for (var j = 0; j < time; j += 100) {
                 if (shooting[i] != ' ') {
-                    shootAir(shooting[i], i * 10 * time + j);
+                    shootAir(shooting[i], i * 2 * time + j);
                 }
             }
             setTimeout(function() { Keyboard.explode(); }, (i + 1) * 2*time);
