@@ -57,7 +57,7 @@
     }
 
     var shootAir = function(letter, time) {
-        setTimeout(function() { Keyboard.shootLetter(letter.charCodeAt(0)); }, 2 * time);
+        setTimeout(function() { Keyboard.shootLetter(letter.charCodeAt(0)); },  time);
     }
 
     var fireworks = function() {
