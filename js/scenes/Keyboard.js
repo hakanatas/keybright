@@ -1,138 +1,344 @@
-Skip to content
-This repository
-Search
-Pull requests
-Issues
-Marketplace
-Explore
- @hakanatas
-Sign out
-1
-0 19 kivancguckiran/keybright
-forked from philippedubost/keybright
- Code  Pull requests 0  Projects 0  Wiki  Insights
-You’re editing a file in a project you don’t have write access to. Submitting a change to this file will write it to a new branch in your fork hakanatas/keybright, so you can send a pull request.
-keybright/js/scenes/ 
-Keyboard.js
-  or cancel
-    
- 
-1
-    /*
-2
+/*
     Keybright:  https://github.com/philippedubost/keybright
-3
     ---------------------------------
-4
     This portion is a template behavior for the Keyboard
-5
     It is using the variables keyboardX, keyboardY, keyboardSX, keyboardSY set during Calibration phase.
-6
     */  
-7
     (function() {
-8
     //refers to the folder /img/courierNew/ containing all letters images
-9
     var _FONT = "courierNew";
-10
     var soundType = new Howl({urls: ['../../sound/key1.ogg']});
-11
     var soundSpace = new Howl({urls: ['../../sound/space1.ogg']});
-12
-​
-13
+
     // Matter aliases
-14
     var Engine = Matter.Engine,
-15
     World = Matter.World,
-16
     Bodies = Matter.Bodies,
-17
     Body = Matter.Body,
-18
     Composite = Matter.Composite,
-19
     Composites = Matter.Composites,
-20
     Common = Matter.Common,
-21
     Constraint = Matter.Constraint,
-22
     RenderPixi = Matter.RenderPixi,
-23
     Events = Matter.Events,
-24
     Bounds = Matter.Bounds,
-25
     Vector = Matter.Vector,
-26
     Vertices = Matter.Vertices,
-27
     MouseConstraint = Matter.MouseConstraint,
-28
     Mouse = Matter.Mouse,
-29
     Query = Matter.Query;
-30
-​
-31
+
     var Keyboard = {};
-32
-​
-33
+
     var _engine,
-34
     _gui,
-35
     _inspector,
-36
     _sceneName,
-37
     _mouseConstraint,
-38
     _sceneEvents = [],
-39
     _useInspector = window.location.hash.indexOf('-inspect') !== -1,
-40
     _isMobile = /(ipad|iphone|ipod|android)/gi.test(navigator.userAgent);
-41
-​
-42
-    var keywords =  ['TEF', 'HAKAN', 'KORKMA'];
-43
-    var shootings = ['GELECEK','ATAS',  'SONMEZ'];
-44
+
+    var keywords =  ['MAKER FAIRE', 'HAKAN', 'KORKMA'];
+    var shootings = ['2017',        'ATAS',  'SONMEZ'];
     var sequence = [];
-45
     var max_sequence = keywords.reduce(function (a, b) { return a.length > b.length ? a : b; }).length;
-46
     var time = 1500;
-47
-​
-48
+
     var checkSequence = function(key) {
-49
         var result = -1;
-@hakanatas
-Propose file change
 
-Update Keyboard.js
+        sequence.push(String.fromCharCode(key));
 
-Add an optional extended description…
- 
- 
-© 2018 GitHub, Inc.
-Terms
-Privacy
-Security
-Status
-Help
-Contact GitHub
-API
-Training
-Shop
-Blog
-About
-Press h to open a hovercard with more details.
+        for(var i = 0; i < keywords.length; i++) {console.log(sequence);
+            var check = sequence.join('').indexOf(keywords[i]) !== -1;
+
+            if (check) {
+                sequence = [];
+                result = i;
+                break;
+            }
+
+        }
+
+        if (sequence.length == max_sequence) {
+            sequence.shift();
+        }
+
+        return result;
+    }
+
+    var shootAir = function(letter, time) {
+        setTimeout(function() { Keyboard.shootLetter(letter.charCodeAt(0)); }, time);
+    }
+
+    var fireworks = function(index) {
+        for(var i = 0; i < shootings[index].length; i++) {
+            for (var j = 0; j < time; j += 100) {
+                if (shootings[index][i] != ' ') {
+                    shootAir(shootings[index][i], i * time + j);
+                }
+            }
+            setTimeout(function() { Keyboard.explode(); }, (i + 1) * time);
+        }
+    }
+    
+    // initialise the Keyboard
+    Keyboard.init = function() {
+        var container = document.getElementById('canvas-container');
+
+        // some example engine options
+        var options = {
+            background: '#111111',
+            positionIterations: 6,
+            velocityIterations: 4
+        };
+
+        // create a Matter engine
+        // NOTE: this is actually Matter.Engine.create(), see the aliases at top of this file
+        _engine = Engine.create(container, options);
+
+        // add a mouse controlled constraint
+        _mouseConstraint = MouseConstraint.create(_engine);
+        World.add(_engine.world, _mouseConstraint);
+
+        // run the engine
+        Engine.run(_engine);
+        
+        // set up a scene with bodies
+        Keyboard.keyboard();
+    };
+
+    // each Keyboard scene is set up in its own function, see below
+    Keyboard.keyboard = function() {
+        var _world = _engine.world;
+
+        //Keyboard.reset();
+        _world.bodies = [];
+        
+        var renderOptions = _engine.render.options;
+        renderOptions.background = './img/black.jpg';
+        renderOptions.showAngleIndicator = false;
+        renderOptions.wireframes = false;
+    };
+
+    //create Obstacle correspondig to the physical Keyboard
+    Keyboard.addObstacle = function() {
+        var options = { 
+            background: '#FF0000',
+            isStatic: true,
+            label: "keyboard",
+            render: {
+                visible: false
+            }
+        };
+
+        var _world = _engine.world;
+        World.add(_world, [Bodies.rectangle(keyboardX, keyboardY, keyboardSX, keyboardSY, options)]);
+    };
+
+    //Delete Obstacle for Re-Calibration
+    Keyboard.deleteObstacle = function() {
+        var _world = _engine.world;
+        var bodies = Composite.allBodies(_world);
+
+        for (var i = 0; i < bodies.length; i++) {
+            var body = bodies[i];
+            if(body.label == "keyboard"){
+                World.remove(_world, body);
+            }
+        }
+    };
+
+    //Used onkeydown with A..Z 0..9
+    Keyboard.shootLetter = function(charCode) {
+        var _world = _engine.world;
+
+        //Calculate appropriate x emission for the position of the letter on the keyboard
+        //Standard QWERTY keyboard
+        var x_fraction = .5;
+        var letter = String.fromCharCode(charCode);
+
+        var line1 = "1234567890";
+        var line2 = "QWERTYUIOP";
+        var line3 = "ASDFGHJKL";
+        var line4 = "ZXCVBNM";
+        if(line1.indexOf(letter) != -1){
+            x_fraction = line1.indexOf(letter)/10;                        
+        }
+        else if(line2.indexOf(letter) != -1){
+            x_fraction = line2.indexOf(letter)/10;                        
+        }
+        else if(line3.indexOf(letter) != -1){
+            x_fraction = line3.indexOf(letter)/10;                        
+        }
+        else if(line4.indexOf(letter) != -1){
+            x_fraction = line4.indexOf(letter)/10+1/10;                        
+        }
+
+        //scaling down and offseting to the left
+        x_fraction = x_fraction*0.8-0.2; 
+
+        //Add letter to the world
+        World.add(_world, [
+            Bodies.rectangle(keyboardX + (-0.5+x_fraction)*keyboardSX/2, keyboardY - keyboardSY/2-5, 14, 14, {
+                render: {
+                    strokeStyle: '#ffffff',
+                    sprite: {
+                        texture: './img/'+_FONT+'/'+charCode+'.png',
+                        xScale: .46,
+                        yScale: .50
+                    }
+                }
+            })
+            ]); 
+        
+        //Add a shooting force
+        var bodies = Composite.allBodies(_world);
+        var body = bodies[bodies.length-1];
+        Body.applyForce(body, { x: keyboardX + (-0.5+x_fraction)*keyboardSX/1.7, y: keyboardY - keyboardSY/2-1 }, { 
+            x: Math.random()*0.001, 
+            y: -.007-0.005*Math.random()
+        });
+
+        //Sound
+       soundType.play();
+
+    };
+
+       
+    //Used when SPACE is pressed    
+    Keyboard.explode = function() {
+        var _world = _engine.world;
+
+        var bodies = Composite.allBodies(_world);
+
+        for (var i = 0; i < bodies.length; i++) {
+            var body = bodies[i];
+
+            Body.applyForce(body, { x: 0, y: 0 }, { 
+                x: 0.04*(Math.random()-.5), 
+                y: 0.04*(Math.random()-.5)
+            });
+        }
+        
+        //Sound
+       soundSpace.play();
+    };
+
+    Keyboard.destroyFallenLetters = function() {
+        var _world = _engine.world;
+        var bodies = Composite.allBodies(_world);
+
+        console.log("nb Bodies = "+bodies.length);
+        console.log("1ere lettre y = "+bodies[1].position.y+" 1ere lettre x = "+bodies[1].position.x);
+
+        for (var i = 0; i < bodies.length; i++) {
+            var body = bodies[i];
+            var y = body.position.y;
+
+            //Delete letters out of the world space
+            if(body.position.y > 600 || body.position.x > 800 || body.position.x < 0 || body.position.y < 0){
+                World.remove(_world, body);            
+            }
+
+        }
+        
+    };
+
+    //Used onkeydown Delete
+    Keyboard.deleteLast = function() {        
+            //TODO: animate before death - shrink or pop out
+            var _world = _engine.world;
+
+            var bodies = Composite.allBodies(_world);
+            var body = bodies[bodies.length-1];
+            Body.applyForce(body, { x: 0, y: 0 }, { 
+                x: 0, 
+                y: -.5
+            });
+            //window.setTimeout('', 2000);
+            World.remove(_world, body)
+        };
+
+    Keyboard.onkeydown = function(e) {
+        var _world = _engine.world;
+
+        if(_world.bodies.length > 0){
+                var key = e.keyCode ? e.keyCode : e.which;
+
+                //Character 0..9 A..Z is pressed
+                if(key < 91 && key > 47){
+                    Keyboard.shootLetter(key);
+                }
+                
+                //Space is pressed
+                if(key == 32){
+                    Keyboard.explode();
+                }
+                
+                //Delete is pressed
+                if(key == 46){
+                    Keyboard.deleteLast();
+                }
+
+                var index = checkSequence(key);
+                if(index != -1) {
+                    fireworks(index);
+                }
+
+                Keyboard.destroyFallenLetters();
+            }
+
+            //Light Keyboard
+            $("#keyboardLight").fadeIn(100);
+    }
+
+    Keyboard.onkeyup = function(e) {
+            //Light Keyboard
+            $("#keyboardLight").fadeOut(100);
+    }
+
+    Keyboard.onload = function() {
+        document.getElementById("startPlay").addEventListener("click", function(){
+            Keyboard.addObstacle();
+        });
+
+        document.getElementById("backToCalibration").addEventListener("click", function(){
+            Keyboard.deleteObstacle();
+        });
+
+        //preload images for letters
+        var path = './img/'+_FONT+'/';
+
+        for (var index = 34; index < 97; index++) {
+            new Image().src = path + index + ".png";
+        }
+    };
+
+//*********************************************************************************
+//Define the Scene
+    if(scene == "Keyboard"){
+        console.log("Loading: "+scene);
+        var Scene = Keyboard;
+        // Initialize Scene when the page has loaded fully    
+        if (window.addEventListener) {
+            window.addEventListener('load', Scene.init);
+        } 
+        else if (window.attachEvent) {
+            window.attachEvent('load', Scene.init);
+        }
+
+        window.onload = function() {
+            Scene.onload(); 
+        };
+
+        window.onkeydown = function(e) {
+            Scene.onkeydown(e);
+        }
+
+        window.onkeyup = function(e) {
+            Scene.onkeyup(e);       
+        }
+    }
+})();
