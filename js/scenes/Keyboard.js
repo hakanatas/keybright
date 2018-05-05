@@ -6,7 +6,7 @@
     */  
     (function() {
     //refers to the folder /img/courierNew/ containing all letters images
-    var _FONT = "Arial";
+    var _FONT = "georgia";
     var soundType = new Howl({urls: ['../../sound/key1.ogg']});
     var soundSpace = new Howl({urls: ['../../sound/space1.ogg']});
 
@@ -160,7 +160,7 @@
         var letter = String.fromCharCode(charCode);
 
         var line1 = "1234567890";
-        var line2 = "QWERTYUIOPĞ";
+        var line2 = "QWERTYUIOP";
         var line3 = "ASDFGHJKL";
         var line4 = "ZXCVBNM";
         if(line1.indexOf(letter) != -1){
