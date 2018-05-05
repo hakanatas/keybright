@@ -160,7 +160,7 @@
         var letter = String.fromCharCode(charCode);
 
         var line1 = "1234567890";
-        var line2 = "QWERTYUIOP";
+        var line2 = "QWERTYUIOPĞ";
         var line3 = "ASDFGHJKL";
         var line4 = "ZXCVBNM";
         if(line1.indexOf(letter) != -1){
