@@ -273,7 +273,7 @@
                 }
             
                 if(key == 286)
-                    Leyboard.shootLetter(key);
+                    Keyboard.shootLetter(key);
                 
                 //Space is pressed
                 if(key == 32){
