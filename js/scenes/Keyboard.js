@@ -6,7 +6,7 @@
     */  
     (function() {
     //refers to the folder /img/courierNew/ containing all letters images
-    var _FONT = "courierNew";
+    var _FONT = "Arial";
     var soundType = new Howl({urls: ['../../sound/key1.ogg']});
     var soundSpace = new Howl({urls: ['../../sound/space1.ogg']});
 
