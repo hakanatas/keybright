@@ -39,8 +39,8 @@
     _useInspector = window.location.hash.indexOf('-inspect') !== -1,
     _isMobile = /(ipad|iphone|ipod|android)/gi.test(navigator.userAgent);
 
-    var keywords =  ['MAKER FAIRE', 'HAKAN', 'KORKMA'];
-    var shootings = ['2017',        'ATAS',  'SONMEZ'];
+    var keywords =  ['TEF', 'HAKAN', 'KORKMA'];
+    var shootings = ['EGİTİM','ATAS',  'SONMEZ'];
     var sequence = [];
     var max_sequence = keywords.reduce(function (a, b) { return a.length > b.length ? a : b; }).length;
     var time = 1500;
