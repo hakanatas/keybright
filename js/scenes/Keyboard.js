@@ -271,6 +271,9 @@
                 if(key < 91 && key > 47){
                     Keyboard.shootLetter(key);
                 }
+            
+                if(key == 286)
+                    Leyboard.shootLetter(key);
                 
                 //Space is pressed
                 if(key == 32){
