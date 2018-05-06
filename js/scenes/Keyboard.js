@@ -315,7 +315,10 @@
         //preload images for letters
         var path = './img/'+_FONT+'/';
 
-        for (var index = 34; index < 300; index++) { //index <97
+        for (var index = 34; index < 97; index++) { //index <97
+            new Image().src = path + index + ".png";
+        }
+        if (index == 219){
             new Image().src = path + index + ".png";
         }
     };
