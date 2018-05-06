@@ -273,7 +273,7 @@
                 }
             
                 if(key == 286)
-                    Keyboard.shootLetter(key);
+                    Keyboard.shootLetter(65);
                 
                 //Space is pressed
                 if(key == 32){
