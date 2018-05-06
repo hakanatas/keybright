@@ -272,9 +272,10 @@
                     Keyboard.shootLetter(key);
                 }
             
-                if(key == 286)
+                if(key == 219){
                     Keyboard.shootLetter(65);
-                
+                }
+                Console.log(key);
                 //Space is pressed
                 if(key == 32){
                     Keyboard.explode();
