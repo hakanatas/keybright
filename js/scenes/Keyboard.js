@@ -318,9 +318,6 @@
         for (var index = 34; index < 97; index++) { //index <97
             new Image().src = path + index + ".png";
         }
-        if (index == 219){
-            new Image().src = path + index + ".png";
-        }
     };
 
 //*********************************************************************************
