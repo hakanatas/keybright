@@ -177,7 +177,7 @@
         }
 
         //scaling down and offseting to the left
-        x_fraction = x_fraction*0.8-0.2; 
+        x_fraction = x_fraction*1.8-0.2; 
 
         //Add letter to the world
         World.add(_world, [
